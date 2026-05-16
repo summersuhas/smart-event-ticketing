@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { EVENT_FALLBACK_IMAGE } from '../constants/images'
 
 function formatDate(iso) {
   return new Intl.DateTimeFormat('en-IN', {
@@ -12,11 +14,17 @@ function formatDate(iso) {
 
 export default function EventCard({ event }) {
   const minPrice = Math.min(...Object.values(event.pricing))
+  const [imgSrc, setImgSrc] = useState(event.image || EVENT_FALLBACK_IMAGE)
 
   return (
     <article className="card overflow-hidden transition-shadow hover:shadow-md">
       <div className="aspect-[16/10] overflow-hidden bg-background">
-        <img src={event.image} alt="" className="h-full w-full object-cover" />
+        <img
+          src={imgSrc}
+          alt=""
+          className="h-full w-full object-cover"
+          onError={() => setImgSrc(EVENT_FALLBACK_IMAGE)}
+        />
       </div>
       <div className="p-4 sm:p-5">
         <p className="text-xs font-medium text-muted">From ₹{minPrice}</p>

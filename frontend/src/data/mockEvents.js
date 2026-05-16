@@ -35,7 +35,7 @@ export const mockEvents = [
     venue: 'Riverside Grounds, Pune',
     date: '2026-08-22T17:00:00',
     image:
-      'https://images.unsplash.com/photo-1459749411175-04bf49a629b0?w=800&q=80',
+      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80&auto=format&fit=crop',
     pricing: { vip: 1799, premium: 1099, standard: 599 },
     layout: { rows: 10, cols: 14 },
     seats: buildSeats(10, 14, ['A5', 'A6', 'F8', 'G9', 'H10']),

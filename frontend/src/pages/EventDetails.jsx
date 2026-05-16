@@ -9,6 +9,7 @@ import {
   getSimulatedLockedSeatIds,
   mergeSeatStatuses,
 } from '../utils/simulatedLocks'
+import { EVENT_FALLBACK_IMAGE } from '../constants/images'
 import { saveSeatHold } from '../utils/seats'
 
 function formatDate(iso) {
@@ -30,6 +31,7 @@ export default function EventDetails() {
   const { toast } = useToast()
   const event = getEvent(id)
   const [selectedIds, setSelectedIds] = useState([])
+  const [bannerSrc, setBannerSrc] = useState(null)
 
   const displaySeats = useMemo(() => {
     if (!event) return []
@@ -91,9 +93,10 @@ export default function EventDetails() {
       <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-10">
         <div className="min-w-0">
           <img
-            src={event.image}
+            src={bannerSrc ?? event.image ?? EVENT_FALLBACK_IMAGE}
             alt=""
             className="aspect-video w-full rounded-lg border border-border object-cover"
+            onError={() => setBannerSrc(EVENT_FALLBACK_IMAGE)}
           />
           <h1 className="mt-5 text-2xl font-semibold sm:text-3xl">{event.title}</h1>
           <p className="mt-3 text-muted">{event.description}</p>

@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
-import { useBlocker } from 'react-router-dom'
 
+/**
+ * Warns when leaving checkout (tab close). In-app links use manual confirm in Checkout.
+ * Note: useBlocker needs a data router; we use BrowserRouter, so we avoid it here.
+ */
 export function useCheckoutGuard(active, message) {
-  const blocker = useBlocker(active)
-
   useEffect(() => {
     if (!active) return undefined
     const onBeforeUnload = (e) => {
@@ -13,13 +14,4 @@ export function useCheckoutGuard(active, message) {
     window.addEventListener('beforeunload', onBeforeUnload)
     return () => window.removeEventListener('beforeunload', onBeforeUnload)
   }, [active, message])
-
-  useEffect(() => {
-    if (blocker.state !== 'blocked') return
-    if (window.confirm(message)) {
-      blocker.proceed()
-    } else {
-      blocker.reset()
-    }
-  }, [blocker, message])
 }

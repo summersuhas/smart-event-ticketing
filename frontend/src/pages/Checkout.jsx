@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import HoldTimer from '../components/HoldTimer'
 import { useBookings } from '../context/BookingContext'
@@ -28,6 +28,7 @@ export default function Checkout() {
     !!hold?.seats?.length && !holdExpired && paymentState === 'idle' && !paying
 
   useCheckoutGuard(guardActive, LEAVE_MSG)
+  const handleHoldExpired = useCallback(() => setExpired(true), [])
 
   const releaseAndLeave = (path, message, type = 'info') => {
     clearSeatHold(eventId)
@@ -166,7 +167,7 @@ export default function Checkout() {
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold">Checkout</h1>
-        <HoldTimer expiresAt={hold.expiresAt} onExpired={() => setExpired(true)} />
+        <HoldTimer expiresAt={hold.expiresAt} onExpired={handleHoldExpired} />
       </div>
 
       <div className="mt-8 space-y-6">

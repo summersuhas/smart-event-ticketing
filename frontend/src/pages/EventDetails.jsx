@@ -1,8 +1,14 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import LoadingSpinner from '../components/LoadingSpinner'
 import SeatMap from '../components/SeatMap'
 import { useAuth } from '../context/AuthContext'
 import { useEvents } from '../context/EventsContext'
+import { useToast } from '../context/ToastContext'
+import {
+  getSimulatedLockedSeatIds,
+  mergeSeatStatuses,
+} from '../utils/simulatedLocks'
 import { saveSeatHold } from '../utils/seats'
 
 function formatDate(iso) {
@@ -20,16 +26,27 @@ export default function EventDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
-  const { getEvent } = useEvents()
+  const { getEvent, isLoading } = useEvents()
+  const { toast } = useToast()
   const event = getEvent(id)
   const [selectedIds, setSelectedIds] = useState([])
 
+  const displaySeats = useMemo(() => {
+    if (!event) return []
+    const locked = getSimulatedLockedSeatIds(event.id, event.seats)
+    return mergeSeatStatuses(event.seats, locked)
+  }, [event])
+
   const selectedSeats = useMemo(
-    () => event?.seats.filter((s) => selectedIds.includes(s.id)) ?? [],
-    [event, selectedIds],
+    () => displaySeats.filter((s) => selectedIds.includes(s.id)),
+    [displaySeats, selectedIds],
   )
 
   const total = selectedSeats.reduce((sum, s) => sum + s.price, 0)
+
+  if (isLoading) {
+    return <LoadingSpinner label="Loading event…" />
+  }
 
   if (!event) {
     return (
@@ -43,6 +60,11 @@ export default function EventDetails() {
   }
 
   const toggleSeat = (seatId) => {
+    const seat = displaySeats.find((s) => s.id === seatId)
+    if (seat?.status === 'locked') {
+      toast.info('This seat is held by another user. Try again in a few minutes.')
+      return
+    }
     setSelectedIds((prev) =>
       prev.includes(seatId)
         ? prev.filter((sid) => sid !== seatId)
@@ -56,6 +78,7 @@ export default function EventDetails() {
       return
     }
     saveSeatHold(id, { seats: selectedIds, total })
+    toast.success('Seats reserved for 10 minutes')
     navigate(`/checkout/${id}`)
   }
 
@@ -66,7 +89,7 @@ export default function EventDetails() {
       </Link>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-10">
-        <div>
+        <div className="min-w-0">
           <img
             src={event.image}
             alt=""
@@ -86,15 +109,15 @@ export default function EventDetails() {
           </ul>
         </div>
 
-        <div className="card-pad">
+        <div className="card-pad min-w-0 lg:sticky lg:top-20 lg:self-start">
           <h2 className="text-lg font-semibold">Select seats</h2>
           <p className="mt-1 text-sm text-muted">
-            Seats are held for 10 minutes during checkout (demo).
+            Amber = held by others (simulates Redis lock). Your hold starts at checkout.
           </p>
 
           <div className="mt-6">
             <SeatMap
-              seats={event.seats}
+              seats={displaySeats}
               layout={event.layout}
               selectedIds={selectedIds}
               onToggle={toggleSeat}
@@ -102,7 +125,7 @@ export default function EventDetails() {
           </div>
 
           <div className="mt-6 border-t border-border pt-5">
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between gap-4 text-sm">
               <span className="text-muted">
                 {selectedIds.length} seat{selectedIds.length !== 1 && 's'} selected
               </span>

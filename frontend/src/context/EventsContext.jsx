@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { mockEvents as seedEvents } from '../data/mockEvents'
 import { buildSeats } from '../utils/seats'
 
@@ -20,6 +20,12 @@ function loadCustomEvents() {
 
 export function EventsProvider({ children }) {
   const [customEvents, setCustomEvents] = useState(loadCustomEvents)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 450)
+    return () => clearTimeout(t)
+  }, [])
 
   const events = useMemo(
     () => [...customEvents, ...seedEvents],
@@ -59,8 +65,8 @@ export function EventsProvider({ children }) {
   }, [customEvents])
 
   const value = useMemo(
-    () => ({ events, getEvent, addEvent }),
-    [events, getEvent, addEvent],
+    () => ({ events, getEvent, addEvent, isLoading }),
+    [events, getEvent, addEvent, isLoading],
   )
 
   return <EventsContext.Provider value={value}>{children}</EventsContext.Provider>

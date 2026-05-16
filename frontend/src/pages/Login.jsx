@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 
 export default function Login() {
   const { login } = useAuth()
+  const { toast } = useToast()
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from || '/events'
@@ -19,6 +21,7 @@ export default function Login() {
       return
     }
     login(email, password)
+    toast.success('Logged in successfully')
     navigate(from, { replace: true })
   }
 

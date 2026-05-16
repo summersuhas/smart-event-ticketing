@@ -3,6 +3,7 @@ import OrganizerRoute from './components/OrganizerRoute'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { BookingProvider } from './context/BookingContext'
 import { EventsProvider } from './context/EventsContext'
+import { ToastProvider } from './context/ToastContext'
 import MainLayout from './layouts/MainLayout'
 import BookingHistory from './pages/BookingHistory'
 import Checkout from './pages/Checkout'
@@ -10,6 +11,7 @@ import EventDetails from './pages/EventDetails'
 import Events from './pages/Events'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
 import Signup from './pages/Signup'
 import TicketView from './pages/TicketView'
@@ -88,7 +90,7 @@ function AppRoutes() {
             </OrganizerRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   )
@@ -96,14 +98,16 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <EventsProvider>
-        <BookingProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </BookingProvider>
-      </EventsProvider>
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <EventsProvider>
+          <BookingProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </BookingProvider>
+        </EventsProvider>
+      </AuthProvider>
+    </ToastProvider>
   )
 }

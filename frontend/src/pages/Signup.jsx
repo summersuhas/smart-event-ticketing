@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 
 export default function Signup() {
   const { signup } = useAuth()
+  const { toast } = useToast()
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -11,6 +13,7 @@ export default function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault()
     signup(name || 'Guest', email)
+    toast.success('Account created')
     navigate('/events')
   }
 

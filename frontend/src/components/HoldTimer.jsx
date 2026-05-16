@@ -10,14 +10,15 @@ export default function HoldTimer({ expiresAt, onExpired }) {
 
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
-        expired ? 'bg-danger/15 text-danger' : 'bg-warning/15 text-warning'
+      className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium ${
+        expired
+          ? 'border-danger/30 bg-red-50 text-danger'
+          : 'border-amber-200 bg-amber-50 text-warning'
       }`}
       role="timer"
       aria-live="polite"
     >
-      <span className="h-2 w-2 animate-pulse rounded-full bg-current" />
-      {expired ? 'Hold expired' : `Seats held · ${label}`}
+      {expired ? 'Hold expired' : `Held ${label}`}
     </div>
   )
 }

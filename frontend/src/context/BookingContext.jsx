@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { mockBookings as seedBookings } from '../data/mockEvents'
+import { migrateStorageKey } from '../utils/storage'
 
-const STORAGE_KEY = 'seatflow_bookings'
+const STORAGE_KEY = 'myticket_bookings'
+migrateStorageKey('seatflow_bookings', STORAGE_KEY)
 const BookingContext = createContext(null)
 
 function loadBookings() {

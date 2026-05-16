@@ -1,35 +1,33 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const linkClass = ({ isActive }) =>
-  `text-sm font-medium transition-colors ${
-    isActive ? 'text-accent-soft' : 'text-zinc-400 hover:text-white'
-  }`
+const navLink = ({ isActive }) =>
+  `text-sm font-medium ${isActive ? 'text-primary' : 'text-muted hover:text-foreground'}`
 
 export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-ink/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="font-[family-name:var(--font-display)] text-xl font-bold tracking-tight">
-          Seat<span className="text-accent">Flow</span>
+    <header className="sticky top-0 z-50 border-b border-border bg-surface">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link to="/" className="text-lg font-semibold text-foreground">
+          MyTicket
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          <NavLink to="/" className={linkClass} end>
+        <nav className="hidden items-center gap-6 md:flex">
+          <NavLink to="/" className={navLink} end>
             Home
           </NavLink>
-          <NavLink to="/events" className={linkClass}>
+          <NavLink to="/events" className={navLink}>
             Events
           </NavLink>
           {isAuthenticated && (
             <>
-              <NavLink to="/bookings" className={linkClass}>
-                My Bookings
+              <NavLink to="/bookings" className={navLink}>
+                Bookings
               </NavLink>
               {user?.role === 'organizer' && (
-                <NavLink to="/organizer" className={linkClass}>
+                <NavLink to="/organizer" className={navLink}>
                   Organizer
                 </NavLink>
               )}
@@ -37,35 +35,22 @@ export default function Navbar() {
           )}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {isAuthenticated ? (
             <>
-              <Link
-                to="/profile"
-                className="hidden text-sm text-zinc-400 hover:text-white sm:block"
-              >
+              <Link to="/profile" className="link-muted hidden sm:inline">
                 {user.name}
               </Link>
-              <button
-                type="button"
-                onClick={logout}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 hover:border-white/20 hover:text-white"
-              >
+              <button type="button" onClick={logout} className="btn-secondary text-xs sm:text-sm">
                 Log out
               </button>
             </>
           ) : (
             <>
-              <Link
-                to="/login"
-                className="text-sm text-zinc-400 hover:text-white"
-              >
+              <Link to="/login" className="link-muted">
                 Log in
               </Link>
-              <Link
-                to="/signup"
-                className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-soft"
-              >
+              <Link to="/signup" className="btn-primary">
                 Sign up
               </Link>
             </>

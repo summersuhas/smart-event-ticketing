@@ -1,21 +1,60 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'Syne', system-ui, sans-serif;
-  --color-ink: #0c0a12;
-  --color-surface: #14121c;
-  --color-panel: #1c1926;
-  --color-muted: #8b8499;
-  --color-accent: #7c5cff;
-  --color-accent-soft: #a78bfa;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-background: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-border: #dde1e6;
+  --color-foreground: #181c22;
+  --color-muted: #5f6b7a;
+  --color-primary: #1565c0;
+  --color-primary-hover: #0d47a1;
+  --color-success: #2e7d52;
+  --color-warning: #b45309;
+  --color-danger: #c62828;
+  --shadow-card: 0 1px 2px rgb(24 28 34 / 0.06), 0 4px 12px rgb(24 28 34 / 0.04);
 }
 
 @layer base {
   body {
-    @apply m-0 min-h-screen bg-ink font-sans text-zinc-100 antialiased;
+    @apply m-0 min-h-screen bg-background font-sans text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-semibold tracking-tight text-foreground;
+  }
+}
+
+@layer components {
+  .page-wrap {
+    @apply mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-12;
+  }
+
+  .card {
+    @apply rounded-lg border border-border bg-surface;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-pad {
+    @apply rounded-lg border border-border bg-surface p-5 sm:p-6;
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-background;
+  }
+
+  .input-field {
+    @apply mt-1 w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+
+  .link-muted {
+    @apply text-sm text-muted hover:text-foreground;
   }
 }

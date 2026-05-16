@@ -1,8 +1,8 @@
-# Smart Event Ticketing (SeatFlow)
+# MyTicket — Event Ticketing
 
-MERN event ticketing platform — **Phase 1: frontend** in progress.
+MERN event ticketing platform — **frontend in progress** (backend later).
 
-## Frontend (current)
+## Run frontend
 
 ```bash
 cd frontend
@@ -12,30 +12,17 @@ npm run dev
 
 Open http://localhost:5173
 
-### Stack
+## Stack
 
 - React 19 + Vite
 - React Router
 - Tailwind CSS v4
 
-### Pages
+## Design
 
-| Route | Page |
-|-------|------|
-| `/` | Home |
-| `/events` | Events listing |
-| `/events/:id` | Event details + seat map |
-| `/login`, `/signup` | Auth (localStorage demo) |
-| `/profile` | User profile |
-| `/bookings` | Booking history |
-| `/tickets/:bookingId` | Ticket view |
+Light, minimal UI with a small design system (`card`, `btn-primary`, `page-wrap`) — no dark glassmorphism theme.
 
-Mock data lives in `frontend/src/data/mockEvents.js`.
+## Demo accounts
 
-## Next phases
-
-2. Express + MongoDB APIs  
-3. JWT auth  
-4. Socket.io realtime seats  
-5. Redis seat locks  
-6. Razorpay payments  
+- Any email/password for a regular user
+- Email containing `admin` (e.g. `admin@test.com`) for organizer pages

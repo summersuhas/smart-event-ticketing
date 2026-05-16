@@ -8,50 +8,38 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-white/5">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-accent)_0%,_transparent_50%)] opacity-20" />
-        <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-          <p className="text-sm font-medium uppercase tracking-widest text-accent-soft">
-            Realtime event ticketing
-          </p>
-          <h1 className="mt-4 max-w-2xl font-[family-name:var(--font-display)] text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            Book seats live.{' '}
-            <span className="text-accent-soft">No double bookings.</span>
+      <section className="border-b border-border bg-surface">
+        <div className="page-wrap max-w-3xl">
+          <p className="text-sm font-medium text-primary">Event ticketing</p>
+          <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
+            Book seats for live events
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-zinc-400">
-            Discover concerts, comedy, and festivals. Pick your seats on an
-            interactive map — checkout includes a 10-minute hold timer (demo).
+          <p className="mt-4 text-base leading-relaxed text-muted">
+            Browse concerts and shows, pick seats on a simple map, and complete checkout
+            with a temporary seat hold while you pay.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link
-              to="/events"
-              className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white hover:bg-accent-soft"
-            >
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/events" className="btn-primary">
               Browse events
             </Link>
-            <Link
-              to="/signup"
-              className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-zinc-200 hover:border-white/30"
-            >
+            <Link to="/signup" className="btn-secondary">
               Create account
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <section className="page-wrap">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold">
-              Upcoming events
-            </h2>
-            <p className="mt-1 text-zinc-500">Including events you create as organizer</p>
+            <h2 className="text-xl font-semibold">Upcoming events</h2>
+            <p className="mt-1 text-sm text-muted">Sample listings for this demo</p>
           </div>
-          <Link to="/events" className="text-sm font-medium text-accent-soft hover:text-white">
-            View all →
+          <Link to="/events" className="text-sm font-medium text-primary hover:text-primary-hover">
+            View all
           </Link>
         </div>
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}

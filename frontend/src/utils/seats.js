@@ -23,12 +23,12 @@ export function saveSeatHold(eventId, payload) {
     ...payload,
     expiresAt: Date.now() + HOLD_DURATION_MS,
   }
-  sessionStorage.setItem(`seatflow_hold_${eventId}`, JSON.stringify(hold))
+  sessionStorage.setItem(`myticket_hold_${eventId}`, JSON.stringify(hold))
   return hold
 }
 
 export function getSeatHold(eventId) {
-  const raw = sessionStorage.getItem(`seatflow_hold_${eventId}`)
+  const raw = sessionStorage.getItem(`myticket_hold_${eventId}`)
   if (!raw) return null
   try {
     return JSON.parse(raw)
@@ -38,5 +38,5 @@ export function getSeatHold(eventId) {
 }
 
 export function clearSeatHold(eventId) {
-  sessionStorage.removeItem(`seatflow_hold_${eventId}`)
+  sessionStorage.removeItem(`myticket_hold_${eventId}`)
 }

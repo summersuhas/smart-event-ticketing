@@ -23,51 +23,46 @@ export default function Login() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
-      <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold">
-        Welcome back
-      </h1>
-      <p className="mt-2 text-zinc-400">
-        Demo login — any email works. Use <code className="text-accent-soft">admin@test.com</code> for organizer dashboard access.
+    <div className="page-wrap flex min-h-[60vh] max-w-md flex-col justify-center">
+      <h1 className="text-2xl font-semibold">Log in</h1>
+      <p className="mt-2 text-sm text-muted">
+        Demo: any email works. Use <code className="text-primary">admin@test.com</code> for organizer access.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {error && (
-          <p className="rounded-lg bg-danger/10 px-4 py-2 text-sm text-danger">
+          <p className="rounded-lg border border-danger/30 bg-red-50 px-3 py-2 text-sm text-danger">
             {error}
           </p>
         )}
-        <label className="block">
-          <span className="text-sm text-zinc-400">Email</span>
+        <label className="block text-sm font-medium">
+          Email
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-white/10 bg-panel px-4 py-3 text-white outline-none focus:border-accent"
+            className="input-field"
             placeholder="you@example.com"
           />
         </label>
-        <label className="block">
-          <span className="text-sm text-zinc-400">Password</span>
+        <label className="block text-sm font-medium">
+          Password
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-white/10 bg-panel px-4 py-3 text-white outline-none focus:border-accent"
+            className="input-field"
             placeholder="••••••••"
           />
         </label>
-        <button
-          type="submit"
-          className="w-full rounded-full bg-accent py-3 text-sm font-semibold text-white hover:bg-accent-soft"
-        >
+        <button type="submit" className="btn-primary w-full">
           Log in
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-zinc-500">
+      <p className="mt-6 text-center text-sm text-muted">
         No account?{' '}
-        <Link to="/signup" className="text-accent-soft hover:text-white">
+        <Link to="/signup" className="font-medium text-primary hover:text-primary-hover">
           Sign up
         </Link>
       </p>

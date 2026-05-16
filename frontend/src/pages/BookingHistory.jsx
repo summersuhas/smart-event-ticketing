@@ -10,9 +10,9 @@ export default function BookingHistory() {
 
   if (!isAuthenticated) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-20 text-center">
-        <p className="text-zinc-400">Please log in to view bookings.</p>
-        <Link to="/login" className="mt-4 inline-block text-accent-soft">
+      <div className="page-wrap text-center">
+        <p className="text-muted">Please log in to view bookings.</p>
+        <Link to="/login" className="mt-4 inline-block text-sm font-medium text-primary">
           Log in
         </Link>
       </div>
@@ -20,38 +20,33 @@ export default function BookingHistory() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold">
-        My bookings
-      </h1>
+    <div className="page-wrap">
+      <h1 className="text-2xl font-semibold">My bookings</h1>
 
       {bookings.length === 0 ? (
-        <p className="mt-8 text-zinc-400">
+        <p className="mt-8 text-muted">
           No bookings yet.{' '}
-          <Link to="/events" className="text-accent-soft hover:text-white">
+          <Link to="/events" className="font-medium text-primary">
             Browse events
           </Link>
         </p>
       ) : (
-        <ul className="mt-10 space-y-4">
+        <ul className="mt-8 space-y-4">
           {bookings.map((booking) => {
             const event = getEvent(booking.eventId)
             return (
               <li
                 key={booking.id}
-                className="flex flex-col gap-4 rounded-2xl border border-white/5 bg-panel p-5 sm:flex-row sm:items-center sm:justify-between"
+                className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="font-semibold">{event?.title ?? 'Event'}</p>
-                  <p className="mt-1 text-sm text-zinc-400">
+                  <p className="font-medium">{event?.title ?? 'Event'}</p>
+                  <p className="mt-1 text-sm text-muted">
                     Seats {booking.seats.join(', ')} · ₹
                     {booking.total.toLocaleString('en-IN')}
                   </p>
                 </div>
-                <Link
-                  to={`/tickets/${booking.id}`}
-                  className="rounded-full border border-white/10 px-4 py-2 text-center text-sm font-medium hover:border-accent/50"
-                >
+                <Link to={`/tickets/${booking.id}`} className="btn-secondary shrink-0">
                   View ticket
                 </Link>
               </li>

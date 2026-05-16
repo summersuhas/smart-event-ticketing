@@ -2,7 +2,10 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
 import { mockEvents as seedEvents } from '../data/mockEvents'
 import { buildSeats } from '../utils/seats'
 
-const STORAGE_KEY = 'seatflow_custom_events'
+import { migrateStorageKey } from '../utils/storage'
+
+const STORAGE_KEY = 'myticket_custom_events'
+migrateStorageKey('seatflow_custom_events', STORAGE_KEY)
 const EventsContext = createContext(null)
 
 function loadCustomEvents() {

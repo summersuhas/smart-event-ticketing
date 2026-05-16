@@ -1,10 +1,14 @@
 import { createContext, useContext, useMemo, useState } from 'react'
+import { migrateStorageKey } from '../utils/storage'
 
+const USER_KEY = 'myticket_user'
 const AuthContext = createContext(null)
+
+migrateStorageKey('seatflow_user', USER_KEY)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('seatflow_user')
+    const saved = localStorage.getItem(USER_KEY)
     return saved ? JSON.parse(saved) : null
   })
 
@@ -15,20 +19,20 @@ export function AuthProvider({ children }) {
       email,
       role: email.includes('admin') ? 'organizer' : 'user',
     }
-    localStorage.setItem('seatflow_user', JSON.stringify(demoUser))
+    localStorage.setItem(USER_KEY, JSON.stringify(demoUser))
     setUser(demoUser)
     return demoUser
   }
 
   const signup = (name, email) => {
     const newUser = { id: 'usr-new', name, email, role: 'user' }
-    localStorage.setItem('seatflow_user', JSON.stringify(newUser))
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser))
     setUser(newUser)
     return newUser
   }
 
   const logout = () => {
-    localStorage.removeItem('seatflow_user')
+    localStorage.removeItem(USER_KEY)
     setUser(null)
   }
 

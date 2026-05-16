@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import SeatMap from '../components/SeatMap'
 import { useAuth } from '../context/AuthContext'
-import { mockEvents } from '../data/mockEvents'
+import { useEvents } from '../context/EventsContext'
+import { saveSeatHold } from '../utils/seats'
 
 function formatDate(iso) {
   return new Intl.DateTimeFormat('en-IN', {
@@ -19,7 +20,8 @@ export default function EventDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
-  const event = mockEvents.find((e) => e.id === id)
+  const { getEvent } = useEvents()
+  const event = getEvent(id)
   const [selectedIds, setSelectedIds] = useState([])
 
   const selectedSeats = useMemo(
@@ -53,11 +55,8 @@ export default function EventDetails() {
       navigate('/login', { state: { from: `/events/${id}` } })
       return
     }
-    navigate('/bookings', {
-      state: {
-        pending: { eventId: event.id, seats: selectedIds, total },
-      },
-    })
+    saveSeatHold(id, { seats: selectedIds, total })
+    navigate(`/checkout/${id}`)
   }
 
   return (
@@ -94,7 +93,7 @@ export default function EventDetails() {
             Select seats
           </h2>
           <p className="mt-1 text-sm text-zinc-500">
-            Locked seats will sync via Socket.io + Redis in later phases.
+            Seats lock for 10 minutes at checkout (demo).
           </p>
 
           <div className="mt-8">
@@ -121,7 +120,7 @@ export default function EventDetails() {
               onClick={handleCheckout}
               className="mt-4 w-full rounded-full bg-accent py-3 text-sm font-semibold text-white hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {isAuthenticated ? 'Continue to payment' : 'Log in to book'}
+              {isAuthenticated ? 'Continue to checkout' : 'Log in to book'}
             </button>
           </div>
         </div>

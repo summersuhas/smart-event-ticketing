@@ -1,20 +1,4 @@
-const buildSeats = (rows, cols, booked = []) => {
-  const seats = []
-  for (let r = 1; r <= rows; r++) {
-    for (let c = 1; c <= cols; c++) {
-      const id = `${String.fromCharCode(64 + r)}${c}`
-      seats.push({
-        id,
-        row: r,
-        col: c,
-        tier: r <= 2 ? 'vip' : r <= 5 ? 'premium' : 'standard',
-        status: booked.includes(id) ? 'booked' : 'available',
-        price: r <= 2 ? 2499 : r <= 5 ? 1499 : 799,
-      })
-    }
-  }
-  return seats
-}
+import { buildSeats } from '../utils/seats'
 
 export const mockEvents = [
   {

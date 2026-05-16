@@ -1,10 +1,13 @@
 import { Link, useParams } from 'react-router-dom'
-import { mockBookings, mockEvents } from '../data/mockEvents'
+import { useBookings } from '../context/BookingContext'
+import { useEvents } from '../context/EventsContext'
 
 export default function TicketView() {
   const { bookingId } = useParams()
-  const booking = mockBookings.find((b) => b.id === bookingId)
-  const event = mockEvents.find((e) => e.id === booking?.eventId)
+  const { getBooking } = useBookings()
+  const { getEvent } = useEvents()
+  const booking = getBooking(bookingId)
+  const event = getEvent(booking?.eventId)
 
   if (!booking || !event) {
     return (
@@ -43,11 +46,10 @@ export default function TicketView() {
           </p>
         </div>
         <div className="flex justify-center border-t border-white/5 bg-ink/50 p-8">
-          <div className="flex h-36 w-36 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white text-ink">
-            <span className="text-center text-xs font-mono">
-              QR
-              <br />
-              (Phase 6)
+          <div className="flex h-36 w-36 flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white text-ink">
+            <span className="font-mono text-xs">QR</span>
+            <span className="mt-1 font-mono text-[10px] text-zinc-600">
+              {booking.id.slice(-8)}
             </span>
           </div>
         </div>

@@ -24,9 +24,16 @@ export default function Navbar() {
             Events
           </NavLink>
           {isAuthenticated && (
-            <NavLink to="/bookings" className={linkClass}>
-              My Bookings
-            </NavLink>
+            <>
+              <NavLink to="/bookings" className={linkClass}>
+                My Bookings
+              </NavLink>
+              {user?.role === 'organizer' && (
+                <NavLink to="/organizer" className={linkClass}>
+                  Organizer
+                </NavLink>
+              )}
+            </>
           )}
         </nav>
 

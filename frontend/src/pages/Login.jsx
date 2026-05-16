@@ -28,7 +28,7 @@ export default function Login() {
         Welcome back
       </h1>
       <p className="mt-2 text-zinc-400">
-        Demo login — any email works. Use <code className="text-accent-soft">admin@</code> for organizer role.
+        Demo login — any email works. Use <code className="text-accent-soft">admin@test.com</code> for organizer dashboard access.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">

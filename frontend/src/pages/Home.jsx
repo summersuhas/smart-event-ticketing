@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import EventCard from '../components/EventCard'
-import { mockEvents } from '../data/mockEvents'
+import { useEvents } from '../context/EventsContext'
 
 export default function Home() {
-  const featured = mockEvents.slice(0, 3)
+  const { events } = useEvents()
+  const featured = events.slice(0, 3)
 
   return (
     <>
@@ -19,8 +20,7 @@ export default function Home() {
           </h1>
           <p className="mt-6 max-w-xl text-lg text-zinc-400">
             Discover concerts, comedy, and festivals. Pick your seats on an
-            interactive map — locks and availability sync in realtime once the
-            backend is connected.
+            interactive map — checkout includes a 10-minute hold timer (demo).
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
@@ -45,7 +45,7 @@ export default function Home() {
             <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold">
               Upcoming events
             </h2>
-            <p className="mt-1 text-zinc-500">Mock data for frontend development</p>
+            <p className="mt-1 text-zinc-500">Including events you create as organizer</p>
           </div>
           <Link to="/events" className="text-sm font-medium text-accent-soft hover:text-white">
             View all →

@@ -1,0 +1,17 @@
+# Dependencies & build
+node_modules/
+dist/
+build/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# OS & editors
+.DS_Store
+.idea/
+*.log
+
+# Local tooling
+.cursor/

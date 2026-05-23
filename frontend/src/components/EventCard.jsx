@@ -68,7 +68,7 @@ function EventCard({ event }) {
         </div>
 
         <Link
-          to={`/events/${event.id}`}
+          to={`/events/${event._id}`}
           className="inline-block mt-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
         >
           View Details

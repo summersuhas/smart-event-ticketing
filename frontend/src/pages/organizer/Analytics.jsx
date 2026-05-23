@@ -7,10 +7,10 @@ export default function OrganizerAnalytics() {
   const { bookings } = useBookings()
 
   const byEvent = events.map((event) => {
-    const eventBookings = bookings.filter((b) => b.eventId === event.id)
+    const eventBookings = bookings.filter((b) => b.eventId === event._id)
     const revenue = eventBookings.reduce((s, b) => s + b.total, 0)
     return {
-      id: event.id,
+      id: event._id,
       title: event.title,
       tickets: eventBookings.reduce((s, b) => s + b.seats.length, 0),
       revenue,

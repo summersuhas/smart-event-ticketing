@@ -37,7 +37,7 @@ export default function OrganizerDashboard() {
         <ul className="card mt-4 divide-y divide-border">
           {events.slice(0, 8).map((event) => (
             <li
-              key={event.id}
+              key={event._id}
               className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5"
             >
               <div>
@@ -45,7 +45,7 @@ export default function OrganizerDashboard() {
                 <p className="text-sm text-muted">{event.venue}</p>
               </div>
               <Link
-                to={`/events/${event.id}`}
+                to={`/events/${event._id}`}
                 className="text-sm font-medium text-primary hover:text-primary-hover"
               >
                 View

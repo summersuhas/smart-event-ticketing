@@ -27,7 +27,7 @@ export default function CreateEvent() {
     e.preventDefault()
     const event = addEvent(form)
     toast.success('Event published')
-    navigate(`/events/${event.id}`)
+    navigate(`/events/${event._id}`)
   }
 
   return (

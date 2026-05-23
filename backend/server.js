@@ -1,38 +1,48 @@
-const express = require("express");
-const dotenv = require("dotenv");
+const express = require('express')
+const dotenv = require('dotenv')
+const cors = require('cors')
 
-dotenv.config();
+dotenv.config()
 
-const connectDB = require("./config/db");
+const connectDB = require('./config/db')
 
-const app = express();
+const authRoutes = require('./routes/authRoutes')
+const eventRoutes = require('./routes/eventRoutes')
+const ticketRoutes = require('./routes/ticketRoutes')
 
-// Connect DB
-connectDB();
+const app = express()
+
+// Connect Database
+connectDB()
 
 // Middleware
-app.use(express.json());
+app.use(cors())
+
+app.use(express.json())
+
+app.use(express.urlencoded({ extended: true }))
 
 // Routes
-const authRoutes = require("./routes/authRoutes");
-const eventRoutes = require("./routes/eventRoutes");
-const ticketRoutes = require("./routes/ticketRoutes");
+app.use('/api/auth', authRoutes)
 
-app.use("/api/auth", authRoutes);
-app.use("/api/events", eventRoutes);
-app.use("/api/tickets", ticketRoutes);
+app.use('/api/events', eventRoutes)
+
+app.use('/api/tickets', ticketRoutes)
 
 // Test Route
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   res.json({
-    message: "🎟️ Backend working successfully!",
-  });
-});
+    message:
+      '🎟️ Backend working successfully!',
+  })
+})
 
 // PORT
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+  console.log(
+    `🚀 Server running on port ${PORT}`
+  )
+})

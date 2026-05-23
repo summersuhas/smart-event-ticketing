@@ -7,7 +7,7 @@ const connectDB = require("./config/db");
 
 const app = express();
 
-// Connect Database
+// Connect DB
 connectDB();
 
 // Middleware
@@ -15,8 +15,12 @@ app.use(express.json());
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const ticketRoutes = require("./routes/ticketRoutes");
 
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

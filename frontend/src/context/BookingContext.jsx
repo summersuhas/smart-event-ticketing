@@ -1,53 +1,259 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { mockBookings as seedBookings } from '../data/mockEvents'
-import { migrateStorageKey } from '../utils/storage'
+import {
+  createContext,
+  useContext,
+  useState,
+} from "react";
 
-const STORAGE_KEY = 'myticket_bookings'
-migrateStorageKey('seatflow_bookings', STORAGE_KEY)
-const BookingContext = createContext(null)
+import {
+  holdSeats,
+  confirmBooking,
+  cancelBooking,
+} from "../api/bookingApi";
 
-function loadBookings() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) return JSON.parse(saved)
-  } catch {
-    /* use seed */
-  }
-  return seedBookings
-}
+const BookingContext =
+  createContext();
 
-export function BookingProvider({ children }) {
-  const [bookings, setBookings] = useState(loadBookings)
+export const BookingProvider = ({
+  children,
+}) => {
+  const [
+    selectedSeats,
+    setSelectedSeats,
+  ] = useState([]);
 
-  const addBooking = useCallback(({ eventId, seats, total }) => {
-    const booking = {
-      id: `bk-${Date.now()}`,
-      eventId,
-      seats,
-      total,
-      status: 'confirmed',
-      bookedAt: new Date().toISOString(),
+  const [heldSeats, setHeldSeats] =
+    useState([]);
+
+  const [heldUntil, setHeldUntil] =
+    useState(null);
+
+  const [
+    currentBooking,
+    setCurrentBooking,
+  ] = useState(null);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState(null);
+
+  // Toggle seat selection
+  const toggleSeat = (seat) => {
+    // Prevent selecting unavailable seats
+    if (
+      seat.status === "booked" ||
+      seat.status === "held"
+    ) {
+      return;
     }
-    setBookings((prev) => {
-      const next = [booking, ...prev]
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-      return next
-    })
-    return booking
-  }, [])
 
-  const value = useMemo(
-    () => ({ bookings, addBooking, getBooking: (id) => bookings.find((b) => b.id === id) }),
-    [bookings, addBooking],
-  )
+    setSelectedSeats((prev) => {
+      const exists = prev.find(
+        (s) =>
+          String(s._id) ===
+          String(seat._id)
+      );
+
+      if (exists) {
+        return prev.filter(
+          (s) =>
+            String(s._id) !==
+            String(seat._id)
+        );
+      }
+
+      return [...prev, seat];
+    });
+  };
+
+  // Clear current selection
+  const clearSelection = () => {
+    setSelectedSeats([]);
+
+    setHeldSeats([]);
+
+    setHeldUntil(null);
+  };
+
+  // Hold seats
+  const hold = async (
+    eventId
+  ) => {
+    setLoading(true);
+
+    setError(null);
+
+    try {
+      const seatIds =
+        selectedSeats.map(
+          (seat) => seat._id
+        );
+
+      const data =
+        await holdSeats(
+          eventId,
+          seatIds
+        );
+
+      setHeldSeats(data.seats);
+
+      setHeldUntil(
+        new Date(data.heldUntil)
+      );
+
+      return {
+        success: true,
+      };
+    } catch (err) {
+      const message =
+        err.response?.data
+          ?.message ||
+        "Failed to hold seats";
+
+      setError(message);
+
+      return {
+        success: false,
+        message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Confirm booking
+  const confirm = async (
+    eventId,
+    paymentResult
+  ) => {
+    setLoading(true);
+
+    setError(null);
+
+    try {
+      const seatIds =
+        selectedSeats.map(
+          (seat) => seat._id
+        );
+
+      const data =
+        await confirmBooking(
+          eventId,
+          seatIds,
+          paymentResult
+        );
+
+      setCurrentBooking(
+        data.data
+      );
+
+      clearSelection();
+
+      return {
+        success: true,
+        booking: data.data,
+      };
+    } catch (err) {
+      const message =
+        err.response?.data
+          ?.message ||
+        "Booking failed";
+
+      setError(message);
+
+      return {
+        success: false,
+        message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cancel booking
+  const cancel = async (
+    bookingId
+  ) => {
+    setLoading(true);
+
+    setError(null);
+
+    try {
+      await cancelBooking(
+        bookingId
+      );
+
+      return {
+        success: true,
+      };
+    } catch (err) {
+      const message =
+        err.response?.data
+          ?.message ||
+        "Cancellation failed";
+
+      setError(message);
+
+      return {
+        success: false,
+        message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate total
+  const totalPrice =
+    selectedSeats.reduce(
+      (sum, seat) =>
+        sum + seat.price,
+      0
+    );
 
   return (
-    <BookingContext.Provider value={value}>{children}</BookingContext.Provider>
-  )
-}
+    <BookingContext.Provider
+      value={{
+        selectedSeats,
 
-export function useBookings() {
-  const ctx = useContext(BookingContext)
-  if (!ctx) throw new Error('useBookings must be used within BookingProvider')
-  return ctx
-}
+        heldSeats,
+
+        heldUntil,
+
+        currentBooking,
+
+        loading,
+
+        error,
+
+        totalPrice,
+
+        toggleSeat,
+
+        clearSelection,
+
+        hold,
+
+        confirm,
+
+        cancel,
+      }}
+    >
+      {children}
+    </BookingContext.Provider>
+  );
+};
+
+export const useBooking = () => {
+  const context =
+    useContext(BookingContext);
+
+  if (!context) {
+    throw new Error(
+      "useBooking must be used within BookingProvider"
+    );
+  }
+
+  return context;
+};

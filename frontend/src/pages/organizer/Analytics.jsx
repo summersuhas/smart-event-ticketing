@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { useBookings } from '../../context/BookingContext'
+import { useBooking } from '../../context/BookingContext'
 import { useEvents } from '../../context/EventsContext'
 
 export default function OrganizerAnalytics() {
   const { events } = useEvents()
-  const { bookings } = useBookings()
+  const { bookings } = useBooking()
 
   const byEvent = events.map((event) => {
     const eventBookings = bookings.filter((b) => b.eventId === event._id)

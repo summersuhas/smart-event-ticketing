@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { useBookings } from '../../context/BookingContext'
+import { useBooking } from '../../context/BookingContext'
 import { useEvents } from '../../context/EventsContext'
 
 export default function OrganizerDashboard() {
   const { events } = useEvents()
-  const { bookings } = useBookings()
+  const { bookings } = useBooking()
   const totalRevenue = bookings.reduce((sum, b) => sum + b.total, 0)
 
   return (

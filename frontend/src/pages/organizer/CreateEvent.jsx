@@ -23,11 +23,22 @@ export default function CreateEvent() {
   const update = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: e.target.value }))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const event = addEvent(form)
-    toast.success('Event published')
-    navigate(`/events/${event._id}`)
+  
+    try {
+      const event = await addEvent(form)
+  
+      console.log("CREATED EVENT:", event)
+  
+      toast.success("Event published")
+  
+      navigate(`/events/${event._id}`)
+    } catch (err) {
+      console.error(err)
+  
+      toast.error("Failed to create event")
+    }
   }
 
   return (

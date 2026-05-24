@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 
 function EventCard({ event }) {
   if (!event) return null
+  console.log("EVENT CARD:", event)
 
   const tags = Object.values(event?.tags || {})
   const artists = Object.values(event?.artists || {})

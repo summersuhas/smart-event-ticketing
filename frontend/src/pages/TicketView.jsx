@@ -1,10 +1,10 @@
 import { Link, useParams } from 'react-router-dom'
-import { useBookings } from '../context/BookingContext'
+import { useBooking } from '../context/BookingContext'
 import { useEvents } from '../context/EventsContext'
 
 export default function TicketView() {
   const { bookingId } = useParams()
-  const { getBooking } = useBookings()
+  const { getBooking } = useBooking()
   const { getEvent } = useEvents()
   const booking = getBooking(bookingId)
   const event = getEvent(booking?.eventId)

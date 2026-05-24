@@ -1,63 +1,90 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom'
+
 import { useAuth } from '../context/AuthContext'
+
 import { useToast } from '../context/ToastContext'
 
 export default function Signup() {
   const { signup } = useAuth()
+
   const { toast } = useToast()
+
   const navigate = useNavigate()
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [name, setName] =
+    useState('')
+
+  const [email, setEmail] =
+    useState('')
+
   const [password, setPassword] =
     useState('')
 
-  const [error, setError] = useState('')
+  const [role, setRole] =
+    useState('user')
+
+  const [error, setError] =
+    useState('')
+
   const [loading, setLoading] =
     useState(false)
 
-    const handleSubmit = async (e) => {
-      e.preventDefault()
-    
-      setError('')
-    
-      if (
-        !name.trim() ||
-        !email.trim() ||
-        !password.trim()
-      ) {
-        setError('All fields are required')
-    
-        return
-      }
-    
-      try {
-        setLoading(true)
-    
-        const success = await signup({
+  const handleSubmit = async (
+    e
+  ) => {
+    e.preventDefault()
+
+    setError('')
+
+    if (
+      !name.trim() ||
+      !email.trim() ||
+      !password.trim()
+    ) {
+      setError(
+        'All fields are required'
+      )
+
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const success =
+        await signup({
           name,
           email,
           password,
+          role,
         })
-    
-        console.log(success)
-    
-        if (success === true) {
-          toast.success('Account created')
-    
-          navigate('/events')
-        } else {
-          setError(success)
-        }
-      } catch (err) {
-        console.error(err)
-    
-        setError('Something went wrong')
-      } finally {
-        setLoading(false)
+
+      console.log(success)
+
+      if (success === true) {
+        toast.success(
+          'Account created'
+        )
+
+        navigate('/events')
+      } else {
+        setError(success)
       }
+    } catch (err) {
+      console.error(err)
+
+      setError(
+        'Something went wrong'
+      )
+    } finally {
+      setLoading(false)
     }
+  }
 
   return (
     <div className="page-wrap flex min-h-[60vh] max-w-md flex-col justify-center">
@@ -66,7 +93,8 @@ export default function Signup() {
       </h1>
 
       <p className="mt-2 text-sm text-muted">
-        Create your MyTicket account
+        Create your MyTicket
+        account
       </p>
 
       <form
@@ -87,7 +115,9 @@ export default function Signup() {
             required
             value={name}
             onChange={(e) =>
-              setName(e.target.value)
+              setName(
+                e.target.value
+              )
             }
             className="input-field"
             placeholder="John Doe"
@@ -102,7 +132,9 @@ export default function Signup() {
             required
             value={email}
             onChange={(e) =>
-              setEmail(e.target.value)
+              setEmail(
+                e.target.value
+              )
             }
             className="input-field"
             placeholder="you@example.com"
@@ -117,11 +149,35 @@ export default function Signup() {
             required
             value={password}
             onChange={(e) =>
-              setPassword(e.target.value)
+              setPassword(
+                e.target.value
+              )
             }
             className="input-field"
             placeholder="••••••••"
           />
+        </label>
+
+        <label className="block text-sm font-medium">
+          Account Type
+
+          <select
+            value={role}
+            onChange={(e) =>
+              setRole(
+                e.target.value
+              )
+            }
+            className="input-field"
+          >
+            <option value="user">
+              User
+            </option>
+
+            <option value="organizer">
+              Organizer
+            </option>
+          </select>
         </label>
 
         <button

@@ -1,90 +1,370 @@
-const statusStyles = {
-  available:
-    'border border-border bg-surface text-foreground hover:border-primary hover:bg-primary/5 cursor-pointer',
-  selected:
-    'border-2 border-primary bg-primary text-white cursor-pointer',
-  locked:
-    'border border-amber-300 bg-amber-50 text-warning cursor-not-allowed',
-  booked:
-    'border border-border bg-background text-muted cursor-not-allowed',
-}
+import { useBooking } from "../context/BookingContext";
 
-const tierLabels = { vip: 'VIP', premium: 'Premium', standard: 'Standard' }
+const TIER_COLORS = {
+  vip: {
+    bg: "#7c3aed",
+    selected: "#4c1d95",
+    text: "#fff",
+    label: "VIP",
+  },
 
-const legend = [
-  ['available', 'border-border bg-surface'],
-  ['selected', 'bg-primary border-primary'],
-  ['locked', 'bg-amber-100 border-amber-300'],
-  ['booked', 'bg-background border-border'],
-]
+  premium: {
+    bg: "#0891b2",
+    selected: "#164e63",
+    text: "#fff",
+    label: "Premium",
+  },
 
-export default function SeatMap({ seats, selectedIds, onToggle, layout }) {
-  const rows = Array.from({ length: layout.rows }, (_, i) => i + 1)
+  standard: {
+    bg: "#16a34a",
+    selected: "#14532d",
+    text: "#fff",
+    label: "Standard",
+  },
+};
+
+const STATUS_STYLES = {
+  booked: {
+    bg: "#d1d5db",
+    text: "#6b7280",
+    cursor: "not-allowed",
+  },
+
+  held: {
+    bg: "#fbbf24",
+    text: "#78350f",
+    cursor: "not-allowed",
+  },
+};
+
+const SeatMap = ({ seats }) => {
+  const {
+    selectedSeats,
+    toggleSeat,
+  } = useBooking();
+
+  if (
+    !seats ||
+    seats.length === 0
+  ) {
+    return (
+      <p
+        style={{
+          color: "#6b7280",
+          textAlign: "center",
+        }}
+      >
+        No seats available
+      </p>
+    );
+  }
+
+  // Group seats by rows
+  const rows = seats.reduce(
+    (acc, seat) => {
+      if (!acc[seat.row]) {
+        acc[seat.row] = [];
+      }
+
+      acc[seat.row].push(seat);
+
+      return acc;
+    },
+    {}
+  );
+
+  const isSelected = (seat) =>
+    selectedSeats.some(
+      (s) =>
+        String(s._id) ===
+        String(seat._id)
+    );
+
+  const handleClick = (seat) => {
+    if (
+      seat.status === "booked" ||
+      seat.status === "held"
+    ) {
+      return;
+    }
+
+    toggleSeat(seat);
+  };
 
   return (
-    <div className="w-full min-w-0">
-      <div className="mx-auto mb-5 max-w-xs rounded-md border border-border bg-background py-2 text-center text-xs font-medium uppercase tracking-wide text-muted">
-        Stage
-      </div>
+    <div style={styles.wrapper}>
+      {/* Legend */}
+      <div style={styles.legend}>
+        {Object.entries(
+          TIER_COLORS
+        ).map(([tier, colors]) => (
+          <span
+            key={tier}
+            style={styles.legendItem}
+          >
+            <span
+              style={{
+                ...styles.legendDot,
+                background:
+                  colors.bg,
+              }}
+            />
 
-      <div className="overflow-x-auto pb-2 -mx-1 px-1">
-        <div className="inline-flex min-w-full flex-col items-center gap-1.5 sm:gap-2">
-          {rows.map((rowNum) => {
-            const rowLabel = String.fromCharCode(64 + rowNum)
-            const rowSeats = seats
-              .filter((s) => s.row === rowNum)
-              .sort((a, b) => a.col - b.col)
-
-            return (
-              <div key={rowNum} className="flex items-center gap-1.5 sm:gap-2">
-                <span
-                  className="w-5 shrink-0 text-center text-xs font-semibold text-muted sm:w-6"
-                  aria-hidden
-                >
-                  {rowLabel}
-                </span>
-                <div className="flex gap-1 sm:gap-1.5">
-                  {rowSeats.map((seat) => {
-                    const isSelected = selectedIds.includes(seat.id)
-                    const status = isSelected ? 'selected' : seat.status
-                    const disabled =
-                      seat.status === 'booked' || seat.status === 'locked'
-
-                    return (
-                      <button
-                        key={seat.id}
-                        type="button"
-                        disabled={disabled}
-                        title={`${seat.id} · ${tierLabels[seat.tier]} · ₹${seat.price}${
-                          seat.status === 'locked' ? ' · held by another user' : ''
-                        }`}
-                        onClick={() => onToggle(seat.id)}
-                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded text-[10px] font-medium sm:h-8 sm:w-8 sm:text-xs ${statusStyles[status]}`}
-                        aria-label={`Seat ${seat.id}`}
-                      >
-                        {seat.col}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      <p className="mt-3 text-center text-xs text-muted">
-        Amber seats are temporarily held by other users (demo).
-      </p>
-
-      <div className="mt-4 flex flex-wrap justify-center gap-3 text-xs text-muted sm:gap-4">
-        {legend.map(([key, color]) => (
-          <span key={key} className="flex items-center gap-1.5 capitalize">
-            <span className={`h-3 w-3 rounded-sm border ${color}`} />
-            {key}
+            {colors.label}
           </span>
         ))}
+
+        <span style={styles.legendItem}>
+          <span
+            style={{
+              ...styles.legendDot,
+              background:
+                "#d1d5db",
+            }}
+          />
+
+          Booked
+        </span>
+
+        <span style={styles.legendItem}>
+          <span
+            style={{
+              ...styles.legendDot,
+              background:
+                "#fbbf24",
+            }}
+          />
+
+          Held
+        </span>
+
+        <span style={styles.legendItem}>
+          <span
+            style={{
+              ...styles.legendDot,
+              background:
+                "#fff",
+
+              border:
+                "2px solid #1a202c",
+            }}
+          />
+
+          Selected
+        </span>
+      </div>
+
+      {/* Stage */}
+      <div style={styles.stage}>
+        STAGE
+      </div>
+
+      {/* Seat Grid */}
+      <div style={styles.grid}>
+        {Object.entries(rows).map(
+          ([row, rowSeats]) => (
+            <div
+              key={row}
+              style={styles.row}
+            >
+              <span
+                style={
+                  styles.rowLabel
+                }
+              >
+                {row}
+              </span>
+
+              {rowSeats
+                .sort(
+                  (a, b) =>
+                    a.col - b.col
+                )
+                .map((seat) => {
+                  const selected =
+                    isSelected(
+                      seat
+                    );
+
+                  const tier =
+                    TIER_COLORS[
+                      seat.tier
+                    ] ||
+                    TIER_COLORS.standard;
+
+                  const statusStyle =
+                    STATUS_STYLES[
+                      seat.status
+                    ];
+
+                  const bg =
+                    statusStyle
+                      ? statusStyle.bg
+                      : selected
+                      ? tier.selected
+                      : tier.bg;
+
+                  const color =
+                    statusStyle
+                      ? statusStyle.text
+                      : tier.text;
+
+                  const cursor =
+                    statusStyle
+                      ? statusStyle.cursor
+                      : "pointer";
+
+                  return (
+                    <button
+                      key={seat._id}
+                      type="button"
+                      disabled={
+                        seat.status ===
+                          "booked" ||
+                        seat.status ===
+                          "held"
+                      }
+                      title={`${seat.seatNumber} — ${seat.tier} — ₹${seat.price}`}
+                      onClick={() =>
+                        handleClick(
+                          seat
+                        )
+                      }
+                      style={{
+                        ...styles.seat,
+
+                        background:
+                          bg,
+
+                        color,
+
+                        cursor,
+
+                        outline:
+                          selected
+                            ? "3px solid #1a202c"
+                            : "none",
+
+                        transform:
+                          selected
+                            ? "scale(1.15)"
+                            : "scale(1)",
+                      }}
+                    >
+                      {seat.col}
+                    </button>
+                  );
+                })}
+            </div>
+          )
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
+
+const styles = {
+  wrapper: {
+    fontFamily:
+      "sans-serif",
+
+    padding: "16px",
+  },
+
+  legend: {
+    display: "flex",
+
+    gap: "16px",
+
+    flexWrap: "wrap",
+
+    marginBottom: "16px",
+
+    fontSize: "13px",
+
+    color: "#374151",
+  },
+
+  legendItem: {
+    display: "flex",
+
+    alignItems: "center",
+
+    gap: "6px",
+  },
+
+  legendDot: {
+    width: "14px",
+
+    height: "14px",
+
+    borderRadius: "3px",
+
+    display: "inline-block",
+  },
+
+  stage: {
+    textAlign: "center",
+
+    background: "#e5e7eb",
+
+    color: "#6b7280",
+
+    fontSize: "12px",
+
+    fontWeight: "700",
+
+    letterSpacing: "0.1em",
+
+    padding: "8px",
+
+    borderRadius: "6px",
+
+    marginBottom: "24px",
+  },
+
+  grid: {
+    display: "flex",
+
+    flexDirection: "column",
+
+    gap: "8px",
+  },
+
+  row: {
+    display: "flex",
+
+    alignItems: "center",
+
+    gap: "6px",
+  },
+
+  rowLabel: {
+    width: "20px",
+
+    fontWeight: "700",
+
+    fontSize: "13px",
+
+    color: "#374151",
+  },
+
+  seat: {
+    width: "32px",
+
+    height: "32px",
+
+    borderRadius: "4px",
+
+    border: "none",
+
+    fontSize: "11px",
+
+    fontWeight: "600",
+
+    transition:
+      "transform 0.1s, outline 0.1s",
+  },
+};
+
+export default SeatMap;

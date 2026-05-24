@@ -1,47 +1,115 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import OrganizerRoute from './components/OrganizerRoute'
-import { AuthProvider, useAuth } from './context/AuthContext'
-import { BookingProvider } from './context/BookingContext'
-import { EventsProvider } from './context/EventsContext'
-import { ToastProvider } from './context/ToastContext'
-import MainLayout from './layouts/MainLayout'
-import BookingHistory from './pages/BookingHistory'
-import Checkout from './pages/Checkout'
-import EventDetails from './pages/EventDetails'
-import Events from './pages/Events'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
-import Profile from './pages/Profile'
-import Signup from './pages/Signup'
-import TicketView from './pages/TicketView'
-import OrganizerAnalytics from './pages/organizer/Analytics'
-import CreateEvent from './pages/organizer/CreateEvent'
-import OrganizerDashboard from './pages/organizer/Dashboard'
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth()
-  if (!isAuthenticated) return <Navigate to="/login" replace />
-  return children
+import OrganizerRoute from "./components/OrganizerRoute";
+
+import {
+  AuthProvider,
+  useAuth,
+} from "./context/AuthContext";
+
+import { BookingProvider } from "./context/BookingContext";
+
+import { EventsProvider } from "./context/EventsContext";
+
+import { ToastProvider } from "./context/ToastContext";
+
+import MainLayout from "./layouts/MainLayout";
+
+import Home from "./pages/Home";
+
+import Events from "./pages/Events";
+
+import EventDetails from "./pages/EventDetails";
+
+import Login from "./pages/Login";
+
+import Signup from "./pages/Signup";
+
+import Profile from "./pages/Profile";
+
+import NotFound from "./pages/NotFound";
+
+// NEW BOOKING FLOW PAGES
+import CheckoutPage from "./pages/CheckoutPage";
+
+import BookingsPage from "./pages/BookingsPage";
+
+import TicketPage from "./pages/TicketPage";
+
+// ORGANIZER PAGES
+import OrganizerAnalytics from "./pages/organizer/Analytics";
+
+import CreateEvent from "./pages/organizer/CreateEvent";
+
+import OrganizerDashboard from "./pages/organizer/Dashboard";
+
+function ProtectedRoute({
+  children,
+}) {
+  const { isAuthenticated } =
+    useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+  return children;
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="events" element={<Events />} />
-        <Route path="events/:id" element={<EventDetails />} />
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
+      <Route
+        element={<MainLayout />}
+      >
+        {/* PUBLIC */}
+        <Route
+          index
+          element={<Home />}
+        />
+
+        <Route
+          path="events"
+          element={<Events />}
+        />
+
+        <Route
+          path="events/:id"
+          element={
+            <EventDetails />
+          }
+        />
+
+        <Route
+          path="login"
+          element={<Login />}
+        />
+
+        <Route
+          path="signup"
+          element={<Signup />}
+        />
+
+        {/* PROTECTED */}
         <Route
           path="checkout/:eventId"
           element={
             <ProtectedRoute>
-              <Checkout />
+              <CheckoutPage />
             </ProtectedRoute>
           }
         />
+
         <Route
           path="profile"
           element={
@@ -50,22 +118,26 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="bookings"
           element={
             <ProtectedRoute>
-              <BookingHistory />
+              <BookingsPage />
             </ProtectedRoute>
           }
         />
+
         <Route
-          path="tickets/:bookingId"
+          path="bookings/:bookingId"
           element={
             <ProtectedRoute>
-              <TicketView />
+              <TicketPage />
             </ProtectedRoute>
           }
         />
+
+        {/* ORGANIZER */}
         <Route
           path="organizer"
           element={
@@ -74,6 +146,7 @@ function AppRoutes() {
             </OrganizerRoute>
           }
         />
+
         <Route
           path="organizer/events/new"
           element={
@@ -82,6 +155,7 @@ function AppRoutes() {
             </OrganizerRoute>
           }
         />
+
         <Route
           path="organizer/analytics"
           element={
@@ -90,10 +164,15 @@ function AppRoutes() {
             </OrganizerRoute>
           }
         />
-        <Route path="*" element={<NotFound />} />
+
+        {/* 404 */}
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
       </Route>
     </Routes>
-  )
+  );
 }
 
 export default function App() {
@@ -109,5 +188,5 @@ export default function App() {
         </EventsProvider>
       </AuthProvider>
     </ToastProvider>
-  )
+  );
 }

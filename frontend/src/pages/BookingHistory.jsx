@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import EmptyState from '../components/EmptyState'
-import { useBookings } from '../context/BookingContext'
+import { useBooking } from '../context/BookingContext'
 import { useEvents } from '../context/EventsContext'
 import { useAuth } from '../context/AuthContext'
 
 export default function BookingHistory() {
   const { isAuthenticated } = useAuth()
-  const { bookings } = useBookings()
+  const { bookings } = useBooking()
   const { getEvent } = useEvents()
 
   if (!isAuthenticated) {

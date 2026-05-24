@@ -5,7 +5,7 @@ const API = axios.create({
 })
 
 export const signupUser = (data) =>
-  API.post('/register', data)
+  API.post('/api/auth/register', data)
 
 export const loginUser = (data) =>
-  API.post('/login', data)
+  API.post('/api/auth/login', data)

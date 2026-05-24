@@ -4,7 +4,7 @@ export const fetchAllEvents =
   async () => {
     const response =
       await axiosInstance.get(
-        "/events"
+        "/api/events"
       );
 
     return response.data;
@@ -14,7 +14,7 @@ export const fetchEventById =
   async (id) => {
     const response =
       await axiosInstance.get(
-        `/events/${id}`
+        `/api/events/${id}`
       );
 
     return response.data.data;

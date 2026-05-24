@@ -1,12 +1,12 @@
 import axiosInstance from "./axiosInstance";
 
 export const holdSeats = async (eventId, seatIds) => {
-  const response = await axiosInstance.post("/bookings/hold", { eventId, seatIds });
+  const response = await axiosInstance.post("/api/bookings/hold", { eventId, seatIds });
   return response.data;
 };
 
 export const confirmBooking = async (eventId, seatIds, paymentResult) => {
-  const response = await axiosInstance.post("/bookings/confirm", {
+  const response = await axiosInstance.post("/api/bookings/confirm", {
     eventId,
     seatIds,
     paymentResult,
@@ -20,11 +20,11 @@ export const cancelBooking = async (bookingId) => {
 };
 
 export const fetchMyBookings = async () => {
-  const response = await axiosInstance.get("/bookings/my-bookings");
+  const response = await axiosInstance.get("/api/bookings/my-bookings");
   return response.data;
 };
 
 export const fetchBookingById = async (id) => {
-  const response = await axiosInstance.get(`/bookings/${id}`);
+  const response = await axiosInstance.get(`/api/bookings/${id}`);
   return response.data;
 };

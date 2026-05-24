@@ -19,7 +19,7 @@ export function EventsProvider({ children }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axiosInstance.get("/events");
+        const response = await axiosInstance.get("/api/events");
 
         // Backend response:
         // { success: true, count: 1, data: [...] }
@@ -46,7 +46,7 @@ export function EventsProvider({ children }) {
   const addEvent = useCallback(
     async (form) => {
       try {
-        const response = await axiosInstance.post("/events", {
+        const response = await axiosInstance.post("/api/events", {
           title: form.title,
           description: form.description,
           location: form.venue,

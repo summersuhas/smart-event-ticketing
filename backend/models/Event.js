@@ -45,7 +45,9 @@ const seatSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { _id: true }
+  {
+    _id: true,
+  }
 );
 
 const eventSchema = new mongoose.Schema(
@@ -66,39 +68,9 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
 
-    location: {
+    venue: {
       type: String,
       required: true,
-    },
-
-    category: {
-      type: String,
-      enum: [
-        "music",
-        "sports",
-        "tech",
-        "art",
-        "food",
-        "other",
-      ],
-      default: "other",
-    },
-
-    totalTickets: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
-
-    availableTickets: {
-      type: Number,
-      default: 0,
-    },
-
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
     },
 
     image: {
@@ -107,22 +79,16 @@ const eventSchema = new mongoose.Schema(
         "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4",
     },
 
-    organizer: {
+    organizerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
 
     seatConfig: {
       rows: {
-        type: [String],
-        default: [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-        ],
+        type: Number,
+        default: 8,
       },
 
       cols: {
@@ -130,16 +96,10 @@ const eventSchema = new mongoose.Schema(
         default: 10,
       },
 
-      tierMap: {
-        type: Map,
-        of: String,
-        default: {},
-      },
-
       pricing: {
         vip: {
           type: Number,
-          default: 1499,
+          default: 1999,
         },
 
         premium: {
@@ -154,19 +114,32 @@ const eventSchema = new mongoose.Schema(
       },
     },
 
-    seats: [seatSchema],
+    seats: {
+      type: [seatSchema],
+      default: [],
+    },
+
+    totalTickets: {
+      type: Number,
+      default: 0,
+    },
+
+    availableTickets: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-eventSchema.pre("save", function (next) {
+eventSchema.pre("save", function () {
+  this.totalTickets = this.seats.length;
+
   this.availableTickets = this.seats.filter(
     (seat) => seat.status === "available"
   ).length;
-
-  next();
 });
 
 module.exports = mongoose.model(

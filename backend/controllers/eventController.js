@@ -1,13 +1,5 @@
 const Event = require("../models/Event");
 
-const generateSeats = require(
-  "../utils/generateSeats"
-);
-console.log(
-  "GENERATE SEATS IMPORT:",
-  generateSeats
-);
-
 // @desc    Get all events
 // @route   GET /api/events
 const getEvents = async (req, res) => {
@@ -20,117 +12,131 @@ const getEvents = async (req, res) => {
       success: true,
       count: events.length,
       data: events,
-    })
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
+};
 
 // @desc    Get single event
 // @route   GET /api/events/:id
-const getEventById = async (
-  req,
-  res
-) => {
+const getEventById = async (req, res) => {
   try {
-    const event =
-      await Event.findById(
-        req.params.id
-      )
-      console.log(
-        "FULL EVENT:",
-        event
-      )
-  
-      console.log(
-        "EVENT SEATS:",
-        event?.seats
-      )
+    const event = await Event.findById(
+      req.params.id
+    );
+
+    console.log("FULL EVENT:", event);
+
+    console.log(
+      "EVENT SEATS:",
+      event?.seats
+    );
+
     if (!event) {
       return res.status(404).json({
         success: false,
         message: "Event not found",
-      })
+      });
     }
 
     res.status(200).json({
       success: true,
       data: event,
-    })
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
+};
 
 // @desc    Create a new event
 // @route   POST /api/events
-const createEvent = async (
-  req,
-  res
-) => {
+const createEvent = async (req, res) => {
   try {
-    console.log(
-      "REQ BODY:",
-      req.body
-    )
+    console.log("REQ BODY:", req.body);
 
     const {
-      seatConfig,
-      ...eventData
-    } = req.body
+      title,
+      description,
+      date,
+      venue,
+      image,
 
-    const event = new Event({
-      ...eventData,
 
-      organizer: req.user?._id,
+      rows,
+      cols,
 
-      seatConfig:
-        seatConfig || {},
-    })
+      vip,
+      premium,
+      standard,
 
-    // Generate seats
-    event.seats =
-      generateSeats(
-        event.seatConfig
-      )
+      seats,
+    } = req.body;
 
-    console.log(
-      "GENERATED SEATS:",
-      event.seats
-    )
+    const event = await Event.create({
+      title,
 
-    event.totalTickets =
-      event.seats.length
+      description,
 
-    event.availableTickets =
-      event.seats.length
+      date,
 
-    await event.save()
+      venue,
+
+      image,
+
+      organizerId,
+
+      seatConfig: {
+        rows,
+
+        cols,
+
+        pricing: {
+          vip,
+
+          premium,
+
+          standard,
+        },
+      },
+
+      seats,
+
+      totalTickets:
+        seats?.length || 0,
+
+      availableTickets:
+        seats?.filter(
+          (seat) =>
+            seat.status ===
+            "available"
+        ).length || 0,
+    });
 
     console.log(
       "SAVED EVENT:",
       event
-    )
+    );
 
     res.status(201).json({
       success: true,
       data: event,
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
 
     res.status(400).json({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
+};
 
 // @desc    Update an event
 // @route   PUT /api/events/:id
@@ -147,26 +153,26 @@ const updateEvent = async (
           new: true,
           runValidators: true,
         }
-      )
+      );
 
     if (!event) {
       return res.status(404).json({
         success: false,
         message: "Event not found",
-      })
+      });
     }
 
     res.status(200).json({
       success: true,
       data: event,
-    })
+    });
   } catch (error) {
     res.status(400).json({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
+};
 
 // @desc    Delete an event
 // @route   DELETE /api/events/:id
@@ -178,27 +184,28 @@ const deleteEvent = async (
     const event =
       await Event.findByIdAndDelete(
         req.params.id
-      )
+      );
 
     if (!event) {
       return res.status(404).json({
         success: false,
-        message: "Event not found",
-      })
+        message:
+          "Event not found",
+      });
     }
 
     res.status(200).json({
       success: true,
       message:
         "Event deleted successfully",
-    })
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
+};
 
 module.exports = {
   getEvents,
@@ -206,4 +213,4 @@ module.exports = {
   createEvent,
   updateEvent,
   deleteEvent,
-}
+};

@@ -90,7 +90,7 @@ const createEvent = async (req, res) => {
 
       image,
 
-      organizerId,
+      organizerId: req.user._id,
 
       seatConfig: {
         rows,

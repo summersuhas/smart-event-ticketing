@@ -34,26 +34,40 @@ export default function CreateEvent() {
     const cols = Number(form.cols)
 
     for (let r = 0; r < rows; r++) {
-      const rowLetter = String.fromCharCode(65 + r)
+      const rowLetter = String.fromCharCode(
+        65 + r
+      )
 
       for (let c = 1; c <= cols; c++) {
         let tier = 'standard'
-        let price = Number(form.standard)
+
+        let price = Number(
+          form.standard
+        )
 
         if (r < 2) {
           tier = 'vip'
+
           price = Number(form.vip)
         } else if (r < 5) {
           tier = 'premium'
-          price = Number(form.premium)
+
+          price = Number(
+            form.premium
+          )
         }
 
         seats.push({
           row: rowLetter,
+
           col: c,
+
           seatNumber: `${rowLetter}${c}`,
+
           tier,
+
           price,
+
           status: 'available',
         })
       }
@@ -66,42 +80,57 @@ export default function CreateEvent() {
     e.preventDefault()
 
     try {
-      const user = JSON.parse(
-        localStorage.getItem('user')
-      )
-
       const eventData = {
         ...form,
 
         vip: Number(form.vip),
-        premium: Number(form.premium),
-        standard: Number(form.standard),
+
+        premium: Number(
+          form.premium
+        ),
+
+        standard: Number(
+          form.standard
+        ),
 
         rows: Number(form.rows),
-        cols: Number(form.cols),
 
-        organizerId: user?._id,
+        cols: Number(form.cols),
 
         seats: generateSeats(),
       }
 
-      const event = await addEvent(eventData)
+      const event = await addEvent(
+        eventData
+      )
 
-      console.log('CREATED EVENT:', event)
+      console.log(
+        'CREATED EVENT:',
+        event
+      )
 
-      toast.success('Event published')
+      toast.success(
+        'Event published'
+      )
 
-      navigate(`/events/${event._id}`)
+      navigate(
+        `/events/${event._id}`
+      )
     } catch (err) {
       console.error(err)
 
-      toast.error('Failed to create event')
+      toast.error(
+        'Failed to create event'
+      )
     }
   }
 
   return (
     <div className="page-wrap max-w-2xl">
-      <Link to="/organizer" className="link-muted">
+      <Link
+        to="/organizer"
+        className="link-muted"
+      >
         ← Dashboard
       </Link>
 
@@ -110,7 +139,8 @@ export default function CreateEvent() {
       </h1>
 
       <p className="mt-2 text-sm text-muted">
-        Create and publish a new event.
+        Create and publish a new
+        event.
       </p>
 
       <form
@@ -124,7 +154,9 @@ export default function CreateEvent() {
             required
             className="input-field"
             value={form.title}
-            onChange={update('title')}
+            onChange={update(
+              'title'
+            )}
           />
         </label>
 
@@ -136,7 +168,9 @@ export default function CreateEvent() {
             rows={3}
             className="input-field"
             value={form.description}
-            onChange={update('description')}
+            onChange={update(
+              'description'
+            )}
           />
         </label>
 
@@ -147,7 +181,9 @@ export default function CreateEvent() {
             required
             className="input-field"
             value={form.venue}
-            onChange={update('venue')}
+            onChange={update(
+              'venue'
+            )}
           />
         </label>
 
@@ -159,7 +195,9 @@ export default function CreateEvent() {
             type="datetime-local"
             className="input-field"
             value={form.date}
-            onChange={update('date')}
+            onChange={update(
+              'date'
+            )}
           />
         </label>
 
@@ -169,27 +207,33 @@ export default function CreateEvent() {
           <input
             className="input-field"
             value={form.image}
-            onChange={update('image')}
+            onChange={update(
+              'image'
+            )}
           />
         </label>
 
         <div className="grid grid-cols-3 gap-3">
-          {['vip', 'premium', 'standard'].map(
-            (tier) => (
-              <label
-                key={tier}
-                className="block text-sm font-medium capitalize"
-              >
-                {tier} (₹)
+          {[
+            'vip',
+            'premium',
+            'standard',
+          ].map((tier) => (
+            <label
+              key={tier}
+              className="block text-sm font-medium capitalize"
+            >
+              {tier} (₹)
 
-                <input
-                  className="input-field"
-                  value={form[tier]}
-                  onChange={update(tier)}
-                />
-              </label>
-            )
-          )}
+              <input
+                className="input-field"
+                value={form[tier]}
+                onChange={update(
+                  tier
+                )}
+              />
+            </label>
+          ))}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -199,7 +243,9 @@ export default function CreateEvent() {
             <input
               className="input-field"
               value={form.rows}
-              onChange={update('rows')}
+              onChange={update(
+                'rows'
+              )}
             />
           </label>
 
@@ -209,7 +255,9 @@ export default function CreateEvent() {
             <input
               className="input-field"
               value={form.cols}
-              onChange={update('cols')}
+              onChange={update(
+                'cols'
+              )}
             />
           </label>
         </div>

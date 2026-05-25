@@ -66,6 +66,10 @@ export default function CreateEvent() {
     e.preventDefault()
 
     try {
+      const user = JSON.parse(
+        localStorage.getItem('user')
+      )
+
       const eventData = {
         ...form,
 
@@ -75,6 +79,8 @@ export default function CreateEvent() {
 
         rows: Number(form.rows),
         cols: Number(form.cols),
+
+        organizerId: user?._id,
 
         seats: generateSeats(),
       }
@@ -104,12 +110,16 @@ export default function CreateEvent() {
       </h1>
 
       <p className="mt-2 text-sm text-muted">
-        Saved locally until backend is added.
+        Create and publish a new event.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 space-y-4"
+      >
         <label className="block text-sm font-medium">
           Title
+
           <input
             required
             className="input-field"
@@ -120,6 +130,7 @@ export default function CreateEvent() {
 
         <label className="block text-sm font-medium">
           Description
+
           <textarea
             required
             rows={3}
@@ -131,6 +142,7 @@ export default function CreateEvent() {
 
         <label className="block text-sm font-medium">
           Venue
+
           <input
             required
             className="input-field"
@@ -141,6 +153,7 @@ export default function CreateEvent() {
 
         <label className="block text-sm font-medium">
           Date & time
+
           <input
             required
             type="datetime-local"
@@ -152,6 +165,7 @@ export default function CreateEvent() {
 
         <label className="block text-sm font-medium">
           Banner URL (optional)
+
           <input
             className="input-field"
             value={form.image}
@@ -160,20 +174,22 @@ export default function CreateEvent() {
         </label>
 
         <div className="grid grid-cols-3 gap-3">
-          {['vip', 'premium', 'standard'].map((tier) => (
-            <label
-              key={tier}
-              className="block text-sm font-medium capitalize"
-            >
-              {tier} (₹)
+          {['vip', 'premium', 'standard'].map(
+            (tier) => (
+              <label
+                key={tier}
+                className="block text-sm font-medium capitalize"
+              >
+                {tier} (₹)
 
-              <input
-                className="input-field"
-                value={form[tier]}
-                onChange={update(tier)}
-              />
-            </label>
-          ))}
+                <input
+                  className="input-field"
+                  value={form[tier]}
+                  onChange={update(tier)}
+                />
+              </label>
+            )
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3">

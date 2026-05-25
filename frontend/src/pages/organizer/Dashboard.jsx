@@ -6,7 +6,23 @@ export default function OrganizerDashboard() {
   const { events = [] } = useEvents()
   const { bookings = [] } = useBooking()
 
-  const totalRevenue = (bookings || []).reduce(
+  const user = JSON.parse(
+    localStorage.getItem('user')
+  )
+
+  const myEvents = events.filter(
+    (e) => e.organizerId === user?._id
+  )
+
+  const myEventIds = myEvents.map(
+    (e) => e._id
+  )
+
+  const myBookings = bookings.filter((b) =>
+    myEventIds.includes(b.eventId)
+  )
+
+  const totalRevenue = myBookings.reduce(
     (sum, b) => sum + (b.total || 0),
     0
   )
@@ -36,12 +52,12 @@ export default function OrganizerDashboard() {
         {[
           {
             label: 'Events',
-            value: events.length,
+            value: myEvents.length,
           },
 
           {
             label: 'Bookings',
-            value: bookings.length,
+            value: myBookings.length,
           },
 
           {
@@ -68,11 +84,11 @@ export default function OrganizerDashboard() {
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold">
-          Events
+          Your Events
         </h2>
 
         <ul className="card mt-4 divide-y divide-border">
-          {events.slice(0, 8).map((event) => (
+          {myEvents.slice(0, 8).map((event) => (
             <li
               key={event._id}
               className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5"

@@ -6,23 +6,24 @@ import { useBooking } from '../../context/BookingContext'
 import { useEvents } from '../../context/EventsContext'
 
 export default function OrganizerDashboard() {
-  const { events = [] } = useEvents()
+  const { events = [] } =
+    useEvents()
 
   const { bookings = [] } =
     useBooking()
 
   const user = JSON.parse(
-    localStorage.getItem('user')
+    localStorage.getItem('myticket_user')
   )
 
   // Filter organizer events
   const myEvents = events.filter(
     (e) =>
-      String(e.organizer) ===
-      String(user?._id)
+      e.organizerId ===
+      user?._id
   )
 
-  // Get event IDs
+  // Get organizer event IDs
   const myEventIds = myEvents.map(
     (e) => e._id
   )
@@ -39,7 +40,8 @@ export default function OrganizerDashboard() {
   const totalRevenue =
     myBookings.reduce(
       (sum, b) =>
-        sum + (b.total || 0),
+        sum +
+        (b.totalAmount || 0),
       0
     )
 
@@ -67,32 +69,7 @@ export default function OrganizerDashboard() {
       )
     }
   }
-  console.log("USER:", user)
 
-  console.log("EVENTS:", events)
-  
-  console.log("BOOKINGS:", bookings)
-  console.log(
-    "USER ID:",
-    user?._id
-  )
-  
-  console.log(
-    "EVENT ORGANIZER IDS:",
-    events.map(
-      (e) => e.organizerId
-    )
-  )
-  events.forEach((e) => {
-    console.log(
-      "EVENT:",
-      e.title,
-      "ORG:",
-      e.organizerId,
-      "USER:",
-      user?._id
-    )
-  })
   return (
     <div className="page-wrap">
       {/* Header */}

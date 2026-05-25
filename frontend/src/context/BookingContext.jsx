@@ -2,7 +2,10 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
 } from "react";
+
+import axiosInstance from "../api/axiosInstance";
 
 import {
   holdSeats,
@@ -32,11 +35,39 @@ export const BookingProvider = ({
     setCurrentBooking,
   ] = useState(null);
 
+  const [bookings, setBookings] =
+    useState([]);
+
   const [loading, setLoading] =
     useState(false);
 
   const [error, setError] =
     useState(null);
+
+  // Fetch bookings
+  useEffect(() => {
+    const fetchBookings =
+      async () => {
+        try {
+          const response =
+            await axiosInstance.get(
+              "/api/bookings"
+            );
+
+          setBookings(
+            response.data.data ||
+              []
+          );
+        } catch (error) {
+          console.error(
+            "Failed to fetch bookings",
+            error
+          );
+        }
+      };
+
+    fetchBookings();
+  }, []);
 
   // Toggle seat selection
   const toggleSeat = (seat) => {
@@ -148,6 +179,12 @@ export const BookingProvider = ({
         data.data
       );
 
+      // Update bookings list
+      setBookings((prev) => [
+        data.data,
+        ...prev,
+      ]);
+
       clearSelection();
 
       return {
@@ -222,6 +259,8 @@ export const BookingProvider = ({
         heldUntil,
 
         currentBooking,
+
+        bookings,
 
         loading,
 

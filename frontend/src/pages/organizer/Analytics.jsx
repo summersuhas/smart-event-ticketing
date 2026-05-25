@@ -6,8 +6,24 @@ export default function OrganizerAnalytics() {
   const { events = [] } = useEvents()
   const { bookings = [] } = useBooking()
 
-  const byEvent = events.map((event) => {
-    const eventBookings = bookings.filter(
+  const user = JSON.parse(
+    localStorage.getItem('user')
+  )
+
+  const myEvents = events.filter(
+    (e) => e.organizerId === user?._id
+  )
+
+  const myEventIds = myEvents.map(
+    (e) => e._id
+  )
+
+  const myBookings = bookings.filter((b) =>
+    myEventIds.includes(b.eventId)
+  )
+
+  const byEvent = myEvents.map((event) => {
+    const eventBookings = myBookings.filter(
       (b) => b.eventId === event._id
     )
 
@@ -18,10 +34,12 @@ export default function OrganizerAnalytics() {
 
     return {
       id: event._id,
+
       title: event.title,
 
       tickets: eventBookings.reduce(
-        (s, b) => s + (b.seats?.length || 0),
+        (s, b) =>
+          s + (b.seats?.length || 0),
         0
       ),
 
@@ -36,7 +54,10 @@ export default function OrganizerAnalytics() {
 
   return (
     <div className="page-wrap">
-      <Link to="/organizer" className="link-muted">
+      <Link
+        to="/organizer"
+        className="link-muted"
+      >
         ← Dashboard
       </Link>
 
@@ -45,12 +66,15 @@ export default function OrganizerAnalytics() {
       </h1>
 
       <p className="mt-2 text-sm text-muted">
-        Based on local demo booking data.
+        Analytics for your events only.
       </p>
 
       <ul className="mt-8 space-y-4">
         {byEvent.map((row) => (
-          <li key={row.id} className="card-pad">
+          <li
+            key={row.id}
+            className="card-pad"
+          >
             <div className="flex flex-wrap justify-between gap-2 text-sm">
               <span className="font-medium">
                 {row.title}
@@ -58,7 +82,9 @@ export default function OrganizerAnalytics() {
 
               <span className="text-muted">
                 {row.tickets} tickets · ₹
-                {row.revenue.toLocaleString('en-IN')}
+                {row.revenue.toLocaleString(
+                  'en-IN'
+                )}
               </span>
             </div>
 
@@ -67,7 +93,9 @@ export default function OrganizerAnalytics() {
                 className="h-full rounded-full bg-primary"
                 style={{
                   width: `${
-                    (row.revenue / maxRevenue) * 100
+                    (row.revenue /
+                      maxRevenue) *
+                    100
                   }%`,
                 }}
               />

@@ -1,4 +1,7 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   useNavigate,
@@ -21,18 +24,81 @@ const CheckoutPage = () => {
     confirm,
     loading,
     error,
+    heldUntil,
     clearSelection,
   } = useBooking();
 
   const [step, setStep] =
     useState("summary");
 
-  // summary | payment | result
-
   const [
     bookingResult,
     setBookingResult,
   ] = useState(null);
+
+  const [timeLeft, setTimeLeft] =
+    useState("");
+
+  // Countdown Timer
+  useEffect(() => {
+    if (!heldUntil) return;
+
+    const interval =
+      setInterval(() => {
+        const diff =
+          new Date(
+            heldUntil
+          ).getTime() -
+          Date.now();
+
+        if (diff <= 0) {
+          clearInterval(
+            interval
+          );
+
+          clearSelection();
+
+          navigate(
+            `/events/${eventId}`
+          );
+
+          return;
+        }
+
+        const minutes =
+          Math.floor(
+            diff / 1000 / 60
+          );
+
+        const seconds =
+          Math.floor(
+            (diff / 1000) %
+              60
+          );
+
+        setTimeLeft(
+          `${String(
+            minutes
+          ).padStart(
+            2,
+            "0"
+          )}:${String(
+            seconds
+          ).padStart(
+            2,
+            "0"
+          )}`
+        );
+      }, 1000);
+
+    return () =>
+      clearInterval(interval);
+  }, [
+    heldUntil,
+    navigate,
+    eventId,
+    clearSelection,
+  ]);
 
   // No seats selected
   if (
@@ -69,27 +135,25 @@ const CheckoutPage = () => {
 
       if (result.success) {
         setStep("payment");
+
+        // Auto simulate payment success
+        setTimeout(async () => {
+          const paymentResult =
+            await confirm(
+              eventId,
+              {
+                success: true,
+              }
+            );
+
+          setBookingResult(
+            paymentResult
+          );
+
+          setStep("result");
+        }, 1800);
       }
     };
-
-  // Simulate payment
-  const handlePayment = async (
-    succeed
-  ) => {
-    const result =
-      await confirm(eventId, {
-        success: succeed,
-      });
-
-    // Clear stale state on failure
-    if (!result.success) {
-      clearSelection();
-    }
-
-    setBookingResult(result);
-
-    setStep("result");
-  };
 
   // ─────────────────────────────
   // SUMMARY STEP
@@ -199,7 +263,7 @@ const CheckoutPage = () => {
     return (
       <div style={styles.page}>
         <h2 style={styles.heading}>
-          Payment
+          Processing Payment
         </h2>
 
         <div style={styles.paymentBox}>
@@ -212,42 +276,28 @@ const CheckoutPage = () => {
           </p>
 
           <p style={styles.payNote}>
-            This is a simulated
-            payment. Choose an
-            outcome below.
+            Please wait while we
+            confirm your booking...
           </p>
-        </div>
 
-        {error && (
-          <p style={styles.error}>
-            {error}
-          </p>
-        )}
+          {timeLeft && (
+            <div
+              style={
+                styles.timer
+              }
+            >
+              Seats reserved for{" "}
+              {timeLeft}
+            </div>
+          )}
 
-        <div style={styles.actions}>
-          <button
-            style={styles.failBtn}
-            onClick={() =>
-              handlePayment(false)
+          <div
+            style={
+              styles.loader
             }
-            disabled={loading}
           >
-            {loading
-              ? "Processing..."
-              : "Simulate Failure"}
-          </button>
-
-          <button
-            style={styles.btn}
-            onClick={() =>
-              handlePayment(true)
-            }
-            disabled={loading}
-          >
-            {loading
-              ? "Processing..."
-              : "Simulate Success"}
-          </button>
+            ⏳
+          </div>
         </div>
       </div>
     );
@@ -339,8 +389,8 @@ const CheckoutPage = () => {
                   styles.payNote
                 }
               >
-                Your seats have
-                been released.
+                Payment could not
+                be completed.
                 Please try again.
               </p>
 
@@ -477,18 +527,6 @@ const styles = {
     cursor: "pointer",
   },
 
-  failBtn: {
-    flex: 1,
-    padding: "12px",
-    background: "#ef4444",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    fontWeight: "700",
-    fontSize: "15px",
-    cursor: "pointer",
-  },
-
   error: {
     color: "#c53030",
     background: "#fff5f5",
@@ -505,7 +543,7 @@ const styles = {
     border:
       "1px solid #e2e8f0",
     borderRadius: "12px",
-    padding: "24px",
+    padding: "32px",
     textAlign: "center",
     marginBottom: "24px",
   },
@@ -527,6 +565,18 @@ const styles = {
     color: "#718096",
     fontSize: "13px",
     margin: 0,
+  },
+
+  timer: {
+    marginTop: "18px",
+    fontSize: "14px",
+    fontWeight: "700",
+    color: "#dc2626",
+  },
+
+  loader: {
+    marginTop: "24px",
+    fontSize: "40px",
   },
 
   resultBox: {

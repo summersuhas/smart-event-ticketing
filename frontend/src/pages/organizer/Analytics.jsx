@@ -10,47 +10,70 @@ export default function OrganizerAnalytics() {
     localStorage.getItem('user')
   )
 
+  // Filter only organizer's events
   const myEvents = events.filter(
-    (e) => e.organizerId === user?._id
+    (e) =>
+      String(e.organizer) ===
+      String(user?._id)
   )
 
+  // Get organizer event IDs
   const myEventIds = myEvents.map(
     (e) => e._id
   )
 
-  const myBookings = bookings.filter((b) =>
-    myEventIds.includes(b.eventId)
+  // Filter organizer bookings
+  const myBookings = bookings.filter(
+    (b) =>
+      myEventIds.includes(
+        b.eventId
+      )
   )
 
-  const byEvent = myEvents.map((event) => {
-    const eventBookings = myBookings.filter(
-      (b) => b.eventId === event._id
-    )
+  // Analytics by event
+  const byEvent = myEvents.map(
+    (event) => {
+      const eventBookings =
+        myBookings.filter(
+          (b) =>
+            b.eventId ===
+            event._id
+        )
 
-    const revenue = eventBookings.reduce(
-      (s, b) => s + (b.total || 0),
-      0
-    )
+      const revenue =
+        eventBookings.reduce(
+          (s, b) =>
+            s +
+            (b.total || 0),
+          0
+        )
 
-    return {
-      id: event._id,
+      return {
+        id: event._id,
 
-      title: event.title,
+        title: event.title,
 
-      tickets: eventBookings.reduce(
-        (s, b) =>
-          s + (b.seats?.length || 0),
-        0
-      ),
+        tickets:
+          eventBookings.reduce(
+            (s, b) =>
+              s +
+              (b.seats
+                ?.length || 0),
+            0
+          ),
 
-      revenue,
+        revenue,
+      }
     }
-  })
-
-  const maxRevenue = Math.max(
-    ...byEvent.map((e) => e.revenue),
-    1
   )
+
+  const maxRevenue =
+    Math.max(
+      ...byEvent.map(
+        (e) => e.revenue
+      ),
+      1
+    )
 
   return (
     <div className="page-wrap">
@@ -66,43 +89,54 @@ export default function OrganizerAnalytics() {
       </h1>
 
       <p className="mt-2 text-sm text-muted">
-        Analytics for your events only.
+        Analytics for your
+        events only.
       </p>
 
-      <ul className="mt-8 space-y-4">
-        {byEvent.map((row) => (
-          <li
-            key={row.id}
-            className="card-pad"
-          >
-            <div className="flex flex-wrap justify-between gap-2 text-sm">
-              <span className="font-medium">
-                {row.title}
-              </span>
+      {byEvent.length === 0 ? (
+        <div className="card mt-8 p-6 text-center">
+          <p className="text-muted">
+            No analytics
+            available yet.
+          </p>
+        </div>
+      ) : (
+        <ul className="mt-8 space-y-4">
+          {byEvent.map((row) => (
+            <li
+              key={row.id}
+              className="card-pad"
+            >
+              <div className="flex flex-wrap justify-between gap-2 text-sm">
+                <span className="font-medium">
+                  {row.title}
+                </span>
 
-              <span className="text-muted">
-                {row.tickets} tickets · ₹
-                {row.revenue.toLocaleString(
-                  'en-IN'
-                )}
-              </span>
-            </div>
+                <span className="text-muted">
+                  {row.tickets}{' '}
+                  tickets · ₹
+                  {row.revenue.toLocaleString(
+                    'en-IN'
+                  )}
+                </span>
+              </div>
 
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-background">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{
-                  width: `${
-                    (row.revenue /
-                      maxRevenue) *
-                    100
-                  }%`,
-                }}
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-background">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{
+                    width: `${
+                      (row.revenue /
+                        maxRevenue) *
+                      100
+                    }%`,
+                  }}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

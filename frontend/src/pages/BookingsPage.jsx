@@ -248,7 +248,7 @@ const BookingsPage = () => {
                     >
                       📍{" "}
                       {
-                        event.location
+                        event.venue
                       }
                     </p>
 

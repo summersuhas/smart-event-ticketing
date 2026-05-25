@@ -82,7 +82,7 @@ function EventDetails() {
 
       <p className="mb-2 text-lg text-gray-600">
         📍{" "}
-        {event.location ||
+        {event.venue ||
           "Location unavailable"}
       </p>
 

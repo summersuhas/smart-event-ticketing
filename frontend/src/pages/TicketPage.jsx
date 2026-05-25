@@ -131,7 +131,7 @@ import {
             </p>
   
             <p style={styles.meta}>
-              📍 {event.location}
+              📍 {event.venue}
             </p>
           </div>
   

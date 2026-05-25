@@ -46,26 +46,31 @@ export function EventsProvider({ children }) {
   const addEvent = useCallback(
     async (form) => {
       try {
-        const response = await axiosInstance.post("/api/events", {
-          title: form.title,
-          description: form.description,
-          location: form.venue,
-          date: form.date,
-          totalTickets: 500,
-          price: Number(form.standard) || 499,
-        });
-
-        const newEvent = response.data.data;
-
-        setEvents((prev) => [newEvent, ...prev]);
-
+        const response =
+          await axiosInstance.post(
+            "/api/events",
+            form
+          );
+  
+        const newEvent =
+          response.data.data;
+  
+        setEvents((prev) => [
+          newEvent,
+          ...prev,
+        ]);
+  
         return newEvent;
       } catch (error) {
-        console.error("Failed to create event:", error);
+        console.error(
+          "Failed to create event:",
+          error
+        );
+  
         throw error;
       }
     },
-    [],
+    []
   );
 
   const value = useMemo(

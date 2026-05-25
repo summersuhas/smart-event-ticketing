@@ -67,7 +67,32 @@ export default function OrganizerDashboard() {
       )
     }
   }
+  console.log("USER:", user)
 
+  console.log("EVENTS:", events)
+  
+  console.log("BOOKINGS:", bookings)
+  console.log(
+    "USER ID:",
+    user?._id
+  )
+  
+  console.log(
+    "EVENT ORGANIZER IDS:",
+    events.map(
+      (e) => e.organizerId
+    )
+  )
+  events.forEach((e) => {
+    console.log(
+      "EVENT:",
+      e.title,
+      "ORG:",
+      e.organizerId,
+      "USER:",
+      user?._id
+    )
+  })
   return (
     <div className="page-wrap">
       {/* Header */}

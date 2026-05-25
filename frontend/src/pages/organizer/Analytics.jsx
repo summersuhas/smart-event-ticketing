@@ -1,20 +1,24 @@
 import { Link } from 'react-router-dom'
+
 import { useBooking } from '../../context/BookingContext'
 import { useEvents } from '../../context/EventsContext'
 
 export default function OrganizerAnalytics() {
-  const { events = [] } = useEvents()
-  const { bookings = [] } = useBooking()
+  const { events = [] } =
+    useEvents()
+
+  const { bookings = [] } =
+    useBooking()
 
   const user = JSON.parse(
     localStorage.getItem('user')
   )
 
-  // Filter only organizer's events
+  // Filter organizer events
   const myEvents = events.filter(
     (e) =>
-      String(e.organizer) ===
-      String(user?._id)
+      e.organizerId ===
+      user?._id
   )
 
   // Get organizer event IDs
@@ -44,7 +48,8 @@ export default function OrganizerAnalytics() {
         eventBookings.reduce(
           (s, b) =>
             s +
-            (b.total || 0),
+            (b.totalAmount ||
+              0),
           0
         )
 
